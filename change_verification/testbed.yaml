@@ -1,0 +1,20 @@
+---
+
+testbed:
+  name: Saturday Night and the Networks Alright
+
+devices:
+  csr1000v-1:
+    alias: uut
+    connections:
+      cli:
+        ip: 10.10.20.48
+        protocol: ssh
+    credentials:
+      default:
+        password: C1sco12345
+        username: developer
+      enable:
+        password: C1sco12345
+    os: iosxe
+    type: iosxe
