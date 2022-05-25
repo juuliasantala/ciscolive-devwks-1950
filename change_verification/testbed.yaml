@@ -5,16 +5,15 @@ testbed:
 
 devices:
   csr1000v-1:
-    alias: uut
     connections:
       cli:
-        ip: 10.10.20.48
+        ip: "%ENV{CSR_IP}"
         protocol: ssh
     credentials:
       default:
-        password: C1sco12345
-        username: developer
+        password: "%ENV{CSR_PASSWORD}"
+        username: "%ENV{CSR_USERNAME}"
       enable:
-        password: C1sco12345
+        password: "%ENV{CSR_PASSWORD}"
     os: iosxe
     type: iosxe
