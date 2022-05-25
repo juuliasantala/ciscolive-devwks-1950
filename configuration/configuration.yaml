@@ -1,0 +1,8 @@
+devices:
+  - name: name
+    interfaces:
+      - name: x
+        enabled: "true"
+        ip: x.x.x.x
+        prefix: xx
+        type:

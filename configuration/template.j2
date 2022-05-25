@@ -1,0 +1,20 @@
+{
+    "Loopback": [
+        {% for loopback in interfaces.loopback %}
+            {
+                "name": {{ loopback.name }},
+                "description": {{ loopback.description }},
+                {% if loopback.ip_enabled %} #example
+                "ip": {
+                    "address": {
+                        "primary": {
+                            "address": {{ loopback.ip }},
+                            "mask": {{ loopback.mask }}
+                        }
+                    }
+                }
+                {% endif %}
+            },
+        {% endfor %}
+    ]
+}
