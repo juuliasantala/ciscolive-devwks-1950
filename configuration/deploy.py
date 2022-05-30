@@ -1,6 +1,8 @@
 import os
 import requests
 import urllib3
+import yaml
+import jinja2
 
 urllib3.disable_warnings()
 
@@ -16,6 +18,16 @@ def get_config(device):
     print(f"Status code of retrieving config: {response.status_code}")
     return response.json()["Cisco-IOS-XE-native:interface"]
 
+def create_config(template, values, device="csr1000v-1"):
+    with open(values) as v:
+        config = yaml.safe_load(v.read())
+    with open(template) as t:
+        template = jinja2.Template(t.read())
+    
+    configuration = template.render(device=config[device])
+    print(f"Configuration to be sent: \n {configuration}")
+    return configuration
+
 def edit_config(device, target, config):
     url = f"https://{device['ip']}:{device['port']}/restconf/data/Cisco-IOS-XE-native:native/{target}"
     headers = {
@@ -25,7 +37,7 @@ def edit_config(device, target, config):
     auth = (device['user'], device['pw'])
     payload = config
 
-    response = requests.post(url, headers=headers, auth=auth, json=payload, verify=False)
+    response = requests.put(url, headers=headers, auth=auth, data=payload, verify=False)
     print(f"Status code of deploying the configuration change: {response.status_code}")
 
 if __name__ == "__main__":
@@ -43,24 +55,9 @@ if __name__ == "__main__":
     for loopback in config_response["Loopback"]:
         print(loopback)
 
-    config = {
-        "Loopback": [
-            {
-                "name": "30",
-                "description": "Postman",
-                "ip": {
-                    "address": {
-                        "primary": {
-                            "address": "10.60.20.48",
-                            "mask": "255.255.255.0"
-                        }
-                    }
-                }
-            }
-        ]
-    }
+    configuration = create_config("template.j2", "configuration.yaml")
 
-    edit_config(router, "interface", config)
+    edit_config(router, "interface", configuration)
     config_response = get_config(router)
     for loopback in config_response["Loopback"]:
         print(loopback)

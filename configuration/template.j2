@@ -1,20 +1,32 @@
 {
-    "Loopback": [
-        {% for loopback in interfaces.loopback %}
+    "Cisco-IOS-XE-native:interface": {
+        {% for int_type, interfaces in device.interfaces.items() %}
+        "{{ int_type }}": [
+            {% for interface in interfaces %}
             {
-                "name": {{ loopback.name }},
-                "description": {{ loopback.description }},
-                {% if loopback.ip_enabled %} #example
+                "name": {{ interface.name }},
+                "description": "{{ interface.description }}",
                 "ip": {
                     "address": {
                         "primary": {
-                            "address": {{ loopback.ip }},
-                            "mask": {{ loopback.mask }}
+                            "address": "{{ interface.ip }}",
+                            "mask": "{{ interface.subnet }}"
                         }
                     }
                 }
+                {% if int_type!="Loopback" %}
+                ,
+                "mop": {
+                    "enabled": false,
+                    "sysid": false
+                },
+                "Cisco-IOS-XE-ethernet:negotiation": {
+                    "auto": true
+                }
                 {% endif %}
-            },
-        {% endfor %}
-    ]
+            } {{ "," if not loop.last else "" }}
+            {% endfor %}
+        ]{{ "," if not loop.last else "" }}
+    {% endfor %}
+    }
 }

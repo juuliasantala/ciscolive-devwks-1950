@@ -1,8 +1,24 @@
-devices:
-  - name: name
-    interfaces:
-      - name: x
+csr1000v-1:
+  interfaces:
+    GigabitEthernet:
+      - name: 1
         enabled: "true"
-        ip: x.x.x.x
-        prefix: xx
-        type:
+        description: MANAGEMENT INTERFACE - DON'T TOUCH ME
+        ip: 10.10.20.48
+        subnet: 255.255.255.0
+      - name: 2
+        enabled: "true"
+        description: "configured from jinja2"
+        ip: 10.10.50.20
+        subnet: 255.255.255.0
+      - name: 3
+        enabled: "false"
+        description: "configured from jinja2"
+        ip: 10.10.60.20
+        subnet: 255.255.255.0
+    Loopback:
+      - name: 50
+        enabled: "true"
+        description: "configured from jinja2"
+        ip: 10.20.50.20
+        subnet: 255.255.255.0
