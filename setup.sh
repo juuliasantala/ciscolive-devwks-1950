@@ -1,4 +1,4 @@
-. /home/developer/src/env
+. /home/developer/src/ciscolive-devwks-1950/env
 startvpn.sh &
 mkdir /home/developer/.ssh
 echo "Host *
