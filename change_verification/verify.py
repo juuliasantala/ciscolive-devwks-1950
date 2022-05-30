@@ -28,10 +28,12 @@ def get_snapshot(testbed_file, uut, feature):
     '''
     Function that returns a snapshot of the selected feature.
     '''
+    print(f"Connecting to {uut} for snapshot.")
     testbed = topology.loader.load(testbed_file) # load the testbed
     device = testbed.devices[uut] # find device with hostname / alias
-    device.connect(log_stdout=True) # connect to the device
+    device.connect(log_stdout=False) # connect to the device
     snapshot = device.learn(feature) # learn a selected feature such as VLAN
+    print("Snapshot ready")
     device.disconnect()
     return snapshot
 
@@ -39,7 +41,8 @@ def find_difference(snapshot1, snapshot2):
     '''
     Function to compare two snapshots and find the possible differences.
     '''
-    difference = Diff(snapshot1, snapshot2) # Define the snapshots to compare
+    print("finding differences")
+    difference = Diff(snapshot1, snapshot2, exclude=["device", "accounting", "counters", "rate", "maker"]) # Define the snapshots to compare
     difference.findDiff() # Find differences between the snapshots defined
     return difference
 
