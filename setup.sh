@@ -1,6 +1,8 @@
-source /home/developer/src/ciscolive-devwks-1950/env
+#!/usr/bin/env bash
+
 startvpn.sh &
-mkdir /home/developer/.ssh
+
+mkdir -p /home/developer/.ssh
 echo "Host *
     KexAlgorithms +diffie-hellman-group14-sha1" > /home/developer/.ssh/config
 
