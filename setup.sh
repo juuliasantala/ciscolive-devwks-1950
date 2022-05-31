@@ -7,7 +7,7 @@ echo "Host *
     KexAlgorithms +diffie-hellman-group14-sha1" > /home/developer/.ssh/config
 
 echo "Installing requirements..."
-pip install pyats[full] -q
+pip install pyats[full]==22.4 -q
 echo "Done!\n"
 
 echo "Verifying..."
