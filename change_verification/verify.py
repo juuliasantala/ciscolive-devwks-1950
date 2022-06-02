@@ -47,8 +47,8 @@ def find_difference(snapshot1, snapshot2):
     return difference
 
 if __name__ == '__main__':
-    pre_snapshot = get_snapshot("testbed.yaml", "csr1000v-1", "all")
-    post_snapshot = get_snapshot("testbed.yaml", "csr1000v-1", "all")
+    pre_snapshot = get_snapshot("testbed.yaml", "csr1000v-1", "interface")
+    post_snapshot = get_snapshot("testbed.yaml", "csr1000v-1", "interface")
     diff = find_difference(pre_snapshot, post_snapshot)
     print(diff)
 

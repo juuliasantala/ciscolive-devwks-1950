@@ -19,5 +19,5 @@ interfaces:
     enabled: "true"
     description: "Configured from Python"
     ipv4:
-      ip: 10.20.50.21
+      ip: 10.20.51.21
       subnet: 255.255.255.0
