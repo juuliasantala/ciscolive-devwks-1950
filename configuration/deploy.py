@@ -1,63 +1,73 @@
-import os
 import requests
 import urllib3
-import yaml
-import jinja2
 
 urllib3.disable_warnings()
 
-def get_config(device):
-    url = f"https://{device['ip']}:{device['port']}/restconf/data/Cisco-IOS-XE-native:native/interface"
+def edit_interfaces(ip, username, password, config):
+    url = f"https://{ip}:443/restconf/data/ietf-interfaces:interfaces"
     headers = {
         'Content-Type': 'application/yang-data+json',
         'Accept': 'application/yang-data+json',
     }
-    auth = (device['user'], device['pw'])
+    auth = (username, password)
 
-    response = requests.get(url, headers=headers, auth=auth, verify=False)
-    print(f"Status code of retrieving config: {response.status_code}")
-    return response.json()["Cisco-IOS-XE-native:interface"]
-
-def create_config(template, values, device="csr1000v-1"):
-    with open(values) as v:
-        config = yaml.safe_load(v.read())
-    with open(template) as t:
-        template = jinja2.Template(t.read())
-    
-    configuration = template.render(device=config[device])
-    print(f"Configuration to be sent: \n {configuration}")
-    return configuration
-
-def edit_config(device, target, config):
-    url = f"https://{device['ip']}:{device['port']}/restconf/data/Cisco-IOS-XE-native:native/{target}"
-    headers = {
-        'Content-Type': 'application/yang-data+json',
-        'Accept': 'application/yang-data+json',
-    }
-    auth = (device['user'], device['pw'])
-    payload = config
-
-    response = requests.put(url, headers=headers, auth=auth, data=payload, verify=False)
+    response = requests.put(url, headers=headers, auth=auth, data=config, verify=False)
     print(f"Status code of deploying the configuration change: {response.status_code}")
 
 if __name__ == "__main__":
-    router = {
-        "ip": os.getenv("CSR_IP"),
-        "user": os.getenv("CSR_USERNAME"),
-        "pw": os.getenv("CSR_PASSWORD"),
-        "port": 443
 
-    }
-    if None in router.values():
-        raise Exception("Check your env values!")
+    # DEVICE DETAIL
+    csr_ip = "10.10.20.48"
+    csr_user = "developer"
+    csr_password = "C1sco12345"
 
-    config_response = get_config(router)
-    for loopback in config_response["Loopback"]:
-        print(loopback)
+    # CONFIGURATION
+    interface_config = '''
+    {
+        "ietf-interfaces:interfaces": {
+            "interface": [
+                {
+                    "name": "GigabitEthernet1",
+                    "description": "MANAGEMENT INTERFACE - DON'T TOUCH ME",
+                    "type": "iana-if-type:ethernetCsmacd",
+                    "enabled": true,
+                    "ietf-ip:ipv4": {
+                        "address": [
+                            {
+                                "ip": "10.10.20.48",
+                                "netmask": "255.255.255.0"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "GigabitEthernet2",
+                    "description": "Network Interface",
+                    "type": "iana-if-type:ethernetCsmacd",
+                    "enabled": false
+                },
+                {
+                    "name": "GigabitEthernet3",
+                    "description": "Network Interface",
+                    "type": "iana-if-type:ethernetCsmacd",
+                    "enabled": false
+                },
+                {
+                    "name": "Loopback50",
+                    "description": "Python",
+                    "type": "iana-if-type:softwareLoopback",
+                    "enabled": true,
+                    "ietf-ip:ipv4": {
+                        "address": [
+                            {
+                                "ip": "10.50.20.12",
+                                "netmask": "255.255.255.0"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    }'''
 
-    configuration = create_config("template.j2", "configuration.yaml")
-
-    edit_config(router, "interface", configuration)
-    config_response = get_config(router)
-    for loopback in config_response["Loopback"]:
-        print(loopback)
+    edit_interfaces(csr_ip, csr_user, csr_password, interface_config)

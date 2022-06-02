@@ -1,32 +1,23 @@
 {
-    "Cisco-IOS-XE-native:interface": {
-        {% for int_type, interfaces in device.interfaces.items() %}
-        "{{ int_type }}": [
+    "ietf-interfaces:interfaces": {
+        "interface": [
             {% for interface in interfaces %}
             {
-                "name": {{ interface.name }},
+                "name": "{{ interface.name }}",
                 "description": "{{ interface.description }}",
-                "ip": {
-                    "address": {
-                        "primary": {
-                            "address": "{{ interface.ip }}",
-                            "mask": "{{ interface.subnet }}"
+                "type": "iana-if-type:{{ interface.type }}",
+                "enabled": {{ interface.enabled }}
+                {% if "ipv4" in interface %},
+                "ietf-ip:ipv4": {
+                    "address": [
+                        {
+                            "ip": "{{ interface.ipv4.ip }}",
+                            "netmask": "{{ interface.ipv4.subnet }}"
                         }
-                    }
-                }
-                {% if int_type!="Loopback" %}
-                ,
-                "mop": {
-                    "enabled": false,
-                    "sysid": false
-                },
-                "Cisco-IOS-XE-ethernet:negotiation": {
-                    "auto": true
-                }
-                {% endif %}
-            } {{ "," if not loop.last else "" }}
+                    ]
+                }{% endif %}
+            }{{ "," if not loop.last else "" }}
             {% endfor %}
-        ]{{ "," if not loop.last else "" }}
-    {% endfor %}
+        ]
     }
 }
