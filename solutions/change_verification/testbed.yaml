@@ -1,0 +1,19 @@
+---
+
+testbed:
+  name: Saturday Night and the Networks Alright
+
+devices:
+  csr1000v-1:
+    connections:
+      cli:
+        ip: "%ENV{CSR_IP}"
+        protocol: ssh
+    credentials:
+      default:
+        password: "%ENV{CSR_PASSWORD}"
+        username: "%ENV{CSR_USERNAME}"
+      enable:
+        password: "%ENV{CSR_PASSWORD}"
+    os: iosxe
+    type: iosxe
