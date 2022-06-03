@@ -14,10 +14,10 @@ interfaces:
     type: ethernetCsmacd
     enabled: "false"
     description: "Network interface"
-  - name: Loopback50
+  - name: Loopback1
     type: softwareLoopback
     enabled: "true"
     description: "Configured from Python"
     ipv4:
-      ip: 10.20.51.21
+      ip: 10.20.50.20
       subnet: 255.255.255.0

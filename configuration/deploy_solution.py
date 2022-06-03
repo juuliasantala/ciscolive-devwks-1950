@@ -7,6 +7,8 @@ import os
 urllib3.disable_warnings()
 
 def edit_interfaces(ip, username, password, config):
+    '''Edit interfaces based on a configuration file.'''
+
     url = f"https://{ip}:443/restconf/data/ietf-interfaces:interfaces"
     headers = {
         'Content-Type': 'application/yang-data+json',
@@ -18,6 +20,8 @@ def edit_interfaces(ip, username, password, config):
     print(f"Status code of deploying the configuration change: {response.status_code}")
 
 def create_config(template, values):
+    '''Create a configuration from Jinja2 template and values from YAML file.'''
+
     with open(values) as v:
         config = yaml.safe_load(v.read())
     with open(template) as t:

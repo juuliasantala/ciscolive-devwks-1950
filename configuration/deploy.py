@@ -53,14 +53,14 @@ if __name__ == "__main__":
                     "enabled": false
                 },
                 {
-                    "name": "Loopback50",
-                    "description": "Python",
+                    "name": "Loopback1",
+                    "description": "Configured from Python",
                     "type": "iana-if-type:softwareLoopback",
                     "enabled": true,
                     "ietf-ip:ipv4": {
                         "address": [
                             {
-                                "ip": "10.50.20.12",
+                                "ip": "10.20.50.20",
                                 "netmask": "255.255.255.0"
                             }
                         ]
