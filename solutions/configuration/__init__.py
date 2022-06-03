@@ -1,1 +1,1 @@
-from . import deploy
+from . import dynamic_deploy
