@@ -6,7 +6,8 @@ echo "Connected!"
 
 mkdir -p /home/developer/.ssh
 echo "Host *
-    KexAlgorithms +diffie-hellman-group14-sha1" > /home/developer/.ssh/config
+    KexAlgorithms +diffie-hellman-group14-sha1
+    HostkeyAlgorithms +ssh-rsa" > /home/developer/.ssh/config
 
 echo " "
 echo "Verifying..."
