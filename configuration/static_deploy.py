@@ -4,6 +4,8 @@ import urllib3
 urllib3.disable_warnings()
 
 def edit_interfaces(ip, username, password, config):
+    '''Edit interfaces based on a configuration file.'''
+
     url = f"https://{ip}:443/restconf/data/ietf-interfaces:interfaces"
     headers = {
         'Content-Type': 'application/yang-data+json',
@@ -17,9 +19,9 @@ def edit_interfaces(ip, username, password, config):
 if __name__ == "__main__":
 
     # DEVICE DETAIL
-    csr_ip = "10.10.20.48"
-    csr_user = "developer"
-    csr_password = "C1sco12345"
+    CSR_IP = "10.10.20.48"
+    CSR_USER = "developer"
+    CSR_PASSWORD = "C1sco12345"
 
     # CONFIGURATION
     interface_config = '''
@@ -70,4 +72,4 @@ if __name__ == "__main__":
         }
     }'''
 
-    edit_interfaces(csr_ip, csr_user, csr_password, interface_config)
+    edit_interfaces(CSR_IP, CSR_USER, CSR_PASSWORD, interface_config)

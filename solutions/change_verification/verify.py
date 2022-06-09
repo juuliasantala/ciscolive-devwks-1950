@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 pyATS sample functions for taking a snapshot of the network and comparing two
-snapshots to find the differences..
+snapshots to find the differences.
 
 Copyright (c) 2022 Cisco and/or its affiliates.
 This software is licensed to you under the terms of the Cisco Sample
@@ -42,8 +42,9 @@ def find_difference(snapshot1, snapshot2):
     Function to compare two snapshots and find the possible differences.
     '''
     print("Finding differences: ")
-    difference = Diff(snapshot1, snapshot2, exclude=["device", "accounting", "counters", "rate", "maker"]) # Define the snapshots to compare
-    difference.findDiff() # Find differences between the snapshots defined
+    difference = Diff(snapshot1, snapshot2,
+                exclude=["device", "accounting", "counters", "rate", "maker"])
+    difference.findDiff()
     return difference
 
 if __name__ == '__main__':
@@ -51,4 +52,3 @@ if __name__ == '__main__':
     post_snapshot = get_snapshot("testbed.yaml", "csr1000v-1", "interface")
     diff = find_difference(pre_snapshot, post_snapshot)
     print(diff)
-

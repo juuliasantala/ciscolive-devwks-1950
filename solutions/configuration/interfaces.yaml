@@ -9,11 +9,11 @@ interfaces:
   - name: GigabitEthernet2
     type: ethernetCsmacd
     enabled: "false"
-    description: "Network interface"
+    description: "Network Interface"
   - name: GigabitEthernet3
     type: ethernetCsmacd
     enabled: "false"
-    description: "Network interface"
+    description: "Network Interface"
   - name: Loopback1
     type: softwareLoopback
     enabled: "true"

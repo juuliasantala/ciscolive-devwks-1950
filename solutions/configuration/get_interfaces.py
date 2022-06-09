@@ -21,16 +21,14 @@ or implied.
 import os
 import requests
 import urllib3
-import jinja2
-import yaml
 
 __copyright__ = "Copyright (c) 2022 Cisco and/or its affiliates."
 __license__ = "Cisco Sample Code License, Version 1.1"
 
 urllib3.disable_warnings()
 
-def edit_interfaces(ip, username, password, config):
-    '''Edit interfaces based on a configuration file.'''
+def get_interfaces(ip, username, password):
+    '''Get interfaces using RESTCONF'''
 
     url = f"https://{ip}:443/restconf/data/ietf-interfaces:interfaces"
     headers = {
@@ -39,20 +37,13 @@ def edit_interfaces(ip, username, password, config):
     }
     auth = (username, password)
 
-    response = requests.put(url, headers=headers, auth=auth, data=config, verify=False)
-    print(f"Status code of deploying the configuration change: {response.status_code}")
-
-def create_config(template, values):
-    '''Create a configuration from Jinja2 template and values from YAML file.'''
-
-    with open(values) as v:
-        config = yaml.safe_load(v.read())
-    with open(template) as t:
-        template = jinja2.Template(t.read())
-
-    configuration = template.render(interfaces=config["interfaces"])
-    print(f"Configuration to be sent: \n {configuration}")
-    return configuration
+    response = requests.get(url, headers=headers, auth=auth, verify=False)
+    print(f"Printing out the interfaces on device {ip}:\n")
+    for interface in response.json()["ietf-interfaces:interfaces"]["interface"]:
+        print(f"- {interface['name']}(Enabled: {interface['enabled']})")
+        print(f"  {interface['description']}")
+        if "address" in interface["ietf-ip:ipv4"]:
+            print(f"  IP address: {interface['ietf-ip:ipv4']['address'][0]['ip']}")
 
 if __name__ == "__main__":
 
@@ -61,6 +52,4 @@ if __name__ == "__main__":
     CSR_USER = os.getenv("CSR_USERNAME")
     CSR_PASSWORD = os.getenv("CSR_PASSWORD")
 
-    # CONFIGURATION
-    interface_config = create_config("template.j2", "interfaces.yaml")
-    edit_interfaces(CSR_IP, CSR_USER, CSR_PASSWORD, interface_config)
+    get_interfaces(CSR_IP, CSR_USER, CSR_PASSWORD)
