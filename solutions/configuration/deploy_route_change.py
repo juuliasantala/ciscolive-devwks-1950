@@ -60,10 +60,10 @@ def create_config(template, values):
 if __name__ == "__main__":
 
     # DEVICE DETAIL
-    CSR_IP = os.getenv("CSR_IP", "64.102.247.203")
-    CSR_USER = os.getenv("CSR_USERNAME", input("Username? "))
-    CSR_PASSWORD = os.getenv("CSR_PASSWORD", input("Password? "))
+    DEVICE_IP = os.getenv("DEVICE_IP", input("Router IP? "))
+    DEVICE_USER = os.getenv("DEVICE_USERNAME", input("Username? "))
+    DEVICE_PASSWORD = os.getenv("DEVICE_PASSWORD", input("Password? "))
 
     # CONFIGURATION
     interface_config = create_config("template.j2", "static_routes.yaml")
-    edit_routes(CSR_IP, CSR_USER, CSR_PASSWORD, interface_config)
+    edit_routes(DEVICE_IP, DEVICE_USER, DEVICE_PASSWORD, interface_config)
