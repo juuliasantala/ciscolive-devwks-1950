@@ -1,0 +1,18 @@
+routes:
+  - prefix: 10.0.1.3
+    mask: 255.255.255.255
+    fwd_list:
+      - fwd: GigabitEthernet2
+        metric: 1
+
+  - prefix: 10.0.0.4
+    mask: 255.255.255.255
+    fwd_list:
+      - fwd: GigabitEthernet2
+        metric: 2
+
+  - prefix: 10.0.1.4
+    mask: 255.255.255.255
+    fwd_list:
+      - fwd: GigabitEthernet3
+        metric: 30

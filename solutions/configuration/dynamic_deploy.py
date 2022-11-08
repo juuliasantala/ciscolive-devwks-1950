@@ -29,10 +29,10 @@ __license__ = "Cisco Sample Code License, Version 1.1"
 
 urllib3.disable_warnings()
 
-def edit_interfaces(ip, username, password, config):
-    '''Edit interfaces based on a configuration file.'''
+def edit_routes(ip, username, password, config):
+    '''Edit routing configuration based on a configuration file.'''
 
-    url = f"https://{ip}:443/restconf/data/ietf-interfaces:interfaces"
+    url = f"https://{ip}:443/restconf/data/Cisco-IOS-XE-native:native/ip/route"
     headers = {
         'Content-Type': 'application/yang-data+json',
         'Accept': 'application/yang-data+json',
@@ -41,6 +41,9 @@ def edit_interfaces(ip, username, password, config):
 
     response = requests.put(url, headers=headers, auth=auth, data=config, verify=False)
     print(f"Status code of deploying the configuration change: {response.status_code}")
+    if str(response.status_code)[0] != "2":
+        print("Error:")
+        print(response.text)
 
 def create_config(template, values):
     '''Create a configuration from Jinja2 template and values from YAML file.'''
@@ -50,17 +53,17 @@ def create_config(template, values):
     with open(template) as t:
         template = jinja2.Template(t.read())
 
-    configuration = template.render(interfaces=config["interfaces"])
+    configuration = template.render(routes=config["routes"])
     print(f"Configuration to be sent: \n {configuration}")
     return configuration
 
 if __name__ == "__main__":
 
     # DEVICE DETAIL
-    CSR_IP = os.getenv("CSR_IP")
-    CSR_USER = os.getenv("CSR_USERNAME")
-    CSR_PASSWORD = os.getenv("CSR_PASSWORD")
+    CSR_IP = os.getenv("CSR_IP", "64.102.247.203")
+    CSR_USER = os.getenv("CSR_USERNAME", input("Username? "))
+    CSR_PASSWORD = os.getenv("CSR_PASSWORD", input("Password? "))
 
     # CONFIGURATION
-    interface_config = create_config("template.j2", "interfaces.yaml")
-    edit_interfaces(CSR_IP, CSR_USER, CSR_PASSWORD, interface_config)
+    interface_config = create_config("template.j2", "static_routes.yaml")
+    edit_routes(CSR_IP, CSR_USER, CSR_PASSWORD, interface_config)

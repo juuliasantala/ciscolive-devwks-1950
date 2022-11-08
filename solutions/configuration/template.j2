@@ -1,21 +1,18 @@
 {
-    "ietf-interfaces:interfaces": {
-        "interface": [
-            {% for interface in interfaces %}
+    "Cisco-IOS-XE-native:route": {
+        "ip-route-interface-forwarding-list": [
+            {% for route in routes %}
             {
-                "name": "{{ interface.name }}",
-                "description": "{{ interface.description }}",
-                "type": "iana-if-type:{{ interface.type }}",
-                "enabled": {{ interface.enabled }}
-                {% if "ipv4" in interface %},
-                "ietf-ip:ipv4": {
-                    "address": [
-                        {
-                            "ip": "{{ interface.ipv4.ip }}",
-                            "netmask": "{{ interface.ipv4.subnet }}"
-                        }
-                    ]
-                }{% endif %}
+                "prefix": "{{ route.prefix }}",
+                "mask": "{{ route.mask }}",
+                "fwd-list": [
+                {% for fwd in route.fwd_list %}
+                    {
+                        "fwd": "{{ fwd.fwd }}",
+                        "metric": {{ fwd.metric }}
+                    }{{ "," if not loop.last else "" }}
+                {% endfor %}
+                ]
             }{{ "," if not loop.last else "" }}
             {% endfor %}
         ]
