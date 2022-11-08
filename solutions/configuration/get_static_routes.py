@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Python sample script for changing interface configuration with RESTCONF.
+Python sample script for retrieving infomration on the static route
+configuration with RESTCONF.
 
 Copyright (c) 2022 Cisco and/or its affiliates.
 This software is licensed to you under the terms of the Cisco Sample
@@ -21,16 +22,17 @@ or implied.
 import os
 import requests
 import urllib3
+from prettytable import PrettyTable
 
 __copyright__ = "Copyright (c) 2022 Cisco and/or its affiliates."
 __license__ = "Cisco Sample Code License, Version 1.1"
 
 urllib3.disable_warnings()
 
-def get_interfaces(ip, username, password):
+def get_routes(ip, username, password):
     '''Get interfaces using RESTCONF'''
 
-    url = f"https://{ip}:443/restconf/data/ietf-interfaces:interfaces"
+    url = f"https://{ip}:443/restconf/data/Cisco-IOS-XE-native:native/ip/route"
     headers = {
         'Content-Type': 'application/yang-data+json',
         'Accept': 'application/yang-data+json',
@@ -38,18 +40,28 @@ def get_interfaces(ip, username, password):
     auth = (username, password)
 
     response = requests.get(url, headers=headers, auth=auth, verify=False)
-    print(f"Printing out the interfaces on device {ip}:\n")
-    for interface in response.json()["ietf-interfaces:interfaces"]["interface"]:
-        print(f"- {interface['name']}(Enabled: {interface['enabled']})")
-        print(f"  {interface['description']}")
-        if "address" in interface["ietf-ip:ipv4"]:
-            print(f"  IP address: {interface['ietf-ip:ipv4']['address'][0]['ip']}")
+    print(f"\nThe static routes on device {ip}:")
+    
+    table = PrettyTable()
+    table.field_names = ["Prefix", "Mask", "Fwd", "Distance metric"]
+    for destination in response.json()["Cisco-IOS-XE-native:route"]["ip-route-interface-forwarding-list"]:
+        fwd_list = []
+        fwd_metric = []
+        for fwd in destination['fwd-list']:
+            fwd_list.append(fwd['fwd'])
+            fwd_metric.append(str(fwd['metric']) if 'metric' in fwd else 'NA')
+
+        table.add_row(
+            [destination['prefix'], destination['mask'], "\n".join(fwd_list), "\n".join(fwd_metric)]
+        )
+    print(table)
+
 
 if __name__ == "__main__":
 
     # DEVICE DETAIL
-    CSR_IP = os.getenv("CSR_IP")
-    CSR_USER = os.getenv("CSR_USERNAME")
-    CSR_PASSWORD = os.getenv("CSR_PASSWORD")
+    CSR_IP = os.getenv("CSR_IP", "64.102.247.203")
+    CSR_USER = os.getenv("CSR_USERNAME", input("Username? "))
+    CSR_PASSWORD = os.getenv("CSR_PASSWORD", input("Password? "))
 
-    get_interfaces(CSR_IP, CSR_USER, CSR_PASSWORD)
+    get_routes(CSR_IP, CSR_USER, CSR_PASSWORD)
