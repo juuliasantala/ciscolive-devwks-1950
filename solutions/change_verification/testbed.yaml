@@ -4,16 +4,21 @@ testbed:
   name: Saturday Night and the Networks Alright
 
 devices:
-  csr1000v-1:
+  Test-RTR-CL:
     connections:
       cli:
-        ip: "%ENV{CSR_IP}"
+        # ip: "%ENV{DEVICE_IP}"
+        ip: "64.102.247.203"
         protocol: ssh
+        port: 8000
     credentials:
       default:
-        password: "%ENV{CSR_PASSWORD}"
-        username: "%ENV{CSR_USERNAME}"
+        # password: "%ENV{DEVICE_PASSWORD}"
+        password: "k4jaaNa"
+        # username: "%ENV{DEVICE_USERNAME}"
+        username: "jusantal"
       enable:
-        password: "%ENV{CSR_PASSWORD}"
+        # password: "%ENV{DEVICE_PASSWORD}"
+        password: "k4jaaNa"
     os: iosxe
     type: iosxe

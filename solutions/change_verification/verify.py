@@ -31,7 +31,7 @@ def get_snapshot(testbed_file, uut, feature):
     print(f"Taking a snapshot of feature {feature} on device {uut}.")
     testbed = topology.loader.load(testbed_file) # load the testbed
     device = testbed.devices[uut] # find device with hostname / alias
-    device.connect(log_stdout=False) # connect to the device
+    device.connect(log_stdout=True) # connect to the device
     snapshot = device.learn(feature) # learn a selected feature
     device.disconnect()
     print("Snapshot ready!")
@@ -48,7 +48,8 @@ def find_difference(snapshot1, snapshot2):
     return difference
 
 if __name__ == '__main__':
-    pre_snapshot = get_snapshot("testbed.yaml", "csr1000v-1", "interface")
-    post_snapshot = get_snapshot("testbed.yaml", "csr1000v-1", "interface")
+    pre_snapshot = get_snapshot("testbed.yaml", "Test-RTR-CL", "interface")
+    input("wait")
+    post_snapshot = get_snapshot("testbed.yaml", "Test-RTR-CL", "interface")
     diff = find_difference(pre_snapshot, post_snapshot)
     print(diff)
