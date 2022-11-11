@@ -21,7 +21,7 @@ from pyats import aetest, topology
 __copyright__ = "Copyright (c) 2022 Cisco and/or its affiliates."
 __license__ = "Cisco Sample Code License, Version 1.1"
 
-DESTINATIONS = ('8.8.8.8', '173.30.1.1')
+DESTINATIONS = ('208.67.222.222', '173.30.1.1')
 
 class PingTestcase(aetest.Testcase):
     '''
@@ -41,7 +41,7 @@ class PingTestcase(aetest.Testcase):
     def ping(self, steps, device):
         '''
         Simple ping test: using pyats API "ping", try pinging each of the IP addresses
-        in the DESTINATION list. If the ping is successful, the test step is marked passed,
+        in the DESTINATIONS list. If the ping is successful, the test step is marked passed,
         but if the ping is unsuccesful, the step is marked as failed.
         '''
         for destination in DESTINATIONS:
@@ -54,8 +54,6 @@ class PingTestcase(aetest.Testcase):
                     step.failed(f'Ping {destination} from device {device.hostname} unsuccessful')
                 else:
                     step.passed(f"Ping {destination} from device {device.hostname} successful")
-            # print(steps.details)
-            # steps.report()
 
     @aetest.cleanup
     def disconnect(self, testbed):
@@ -64,11 +62,31 @@ class PingTestcase(aetest.Testcase):
         """
         testbed.disconnect()
 
-def main():
-    testbed = "testbed.yaml"
-    testbed = topology.loader.load(testbed)
+def make_ping_test(testbed_path):
+
+    #if want to use a file
+    import logging
+    file_handler = logging.FileHandler(filename="pyats_output.log", mode="w+")
+    logging.getLogger("pyats.aetest").addHandler(file_handler) 
+
+
+    #If want to use a variable
+    from io import StringIO as StringBuffer
+    pyats_output_logger = StringBuffer()
+    logging_handler = logging.StreamHandler(pyats_output_logger)
+    logging.getLogger("pyats.aetest").addHandler(logging_handler)
+
+    testbed = topology.loader.load(testbed_path)
     my_test = aetest.main(testbed=testbed)
 
+    #these collect the info for variable
+    log_contents = pyats_output_logger.getvalue()
+    pyats_output_logger.close()
+    print("logger variable:\n\n")
+    print(log_contents) 
+
 if __name__ == "__main__":
-    main()
+    testbed = "testbed.yaml"
+    make_ping_test(testbed)
+
 
