@@ -4,21 +4,17 @@ testbed:
   name: Saturday Night and the Networks Alright
 
 devices:
-  Test-RTR-CL:
+  RTR-CiscoLive:
     connections:
       cli:
-        # ip: "%ENV{DEVICE_IP}"
-        ip: "64.102.247.203"
+        ip: "%ENV{DEVICE_IP}"
         protocol: ssh
         port: 8000
     credentials:
       default:
-        # password: "%ENV{DEVICE_PASSWORD}"
-        password: "k4jaaNa"
-        # username: "%ENV{DEVICE_USERNAME}"
-        username: "jusantal"
+        password: "%ENV{DEVICE_PASSWORD}"
+        username: "%ENV{DEVICE_USERNAME}"
       enable:
-        # password: "%ENV{DEVICE_PASSWORD}"
-        password: "k4jaaNa"
+        password: "%ENV{DEVICE_PASSWORD}"
     os: iosxe
     type: iosxe
