@@ -21,8 +21,6 @@ from pyats import aetest, topology
 __copyright__ = "Copyright (c) 2022 Cisco and/or its affiliates."
 __license__ = "Cisco Sample Code License, Version 1.1"
 
-DESTINATIONS = ('208.67.222.222', '173.30.1.1')
-
 class PingTestcase(aetest.Testcase):
     '''
     Simple Testcase for checking connectivity from the network devices.
@@ -38,55 +36,61 @@ class PingTestcase(aetest.Testcase):
 
 
     @aetest.test
-    def ping(self, steps, device):
+    def ping(self, steps, device, destinations, test_results):
         '''
         Simple ping test: using pyats API "ping", try pinging each of the IP addresses
-        in the DESTINATIONS list. If the ping is successful, the test step is marked passed,
+        in the destinations tuple. If the ping is successful, the test step is marked passed,
         but if the ping is unsuccesful, the step is marked as failed.
+        test_results dictionary is used to collect a summary of the results to be further used
+        in for example sending the end result to Webex space.
         '''
-        for destination in DESTINATIONS:
+        test_results[device.hostname] = {"Passed":[], "Failed":[]}
+        for destination in destinations:
             with steps.start(
                 f"Checking Ping from {device.hostname} to {destination}", continue_=True
                 ) as step:
                 try:
                     device.ping(destination)
                 except:
+                    test_results[device.hostname]["Failed"].append(destination)
                     step.failed(f'Ping {destination} from device {device.hostname} unsuccessful')
                 else:
-                    step.passed(f"Ping {destination} from device {device.hostname} successful")
+                    test_results[device.hostname]["Passed"].append(destination)
+                    step.passed(f'Ping {destination} from device {device.hostname} successful')
 
     @aetest.cleanup
     def disconnect(self, testbed):
-        """
+        '''
         Cleanup after the ping test by disconnecting from all testbed devices.
-        """
+        '''
         testbed.disconnect()
 
-def make_ping_test(testbed_path):
+def make_ping_test(testbed_path:str, destinations:tuple)->tuple:
+    '''
+    Function to make the ping test. This function calls aetest.main to run the PingTestcase. The
+    aetest.main returns the result of the full test including all the testcases. This means that
+    even if only one section of one testcase fails, the full test have failed. In addition to the
+    status of the full test, we collect summarized details in a dictionary test_results to
+    understand what exactly failed. The return value of make_ping_test function includes both
+    overal test boolean value, as well as the dictionary of the test_results, for example:
+        (Failed, {"Device-1": {"Passed": ['208.67.222.222'], "Failed": ['173.30.1.1']}})
 
-    #if want to use a file
-    import logging
-    file_handler = logging.FileHandler(filename="pyats_output.log", mode="w+")
-    logging.getLogger("pyats.aetest").addHandler(file_handler) 
+    The summary of results can be collected to the test_results dictionary because a Dictionary is
+    a mutable Python structure. This means that the changes done to it in the tests are saved into
+    the same dictionary that has been initialized in the make_ping_test function.
+    '''
 
-
-    #If want to use a variable
-    from io import StringIO as StringBuffer
-    pyats_output_logger = StringBuffer()
-    logging_handler = logging.StreamHandler(pyats_output_logger)
-    logging.getLogger("pyats.aetest").addHandler(logging_handler)
-
+    summary_test_results = {}
     testbed = topology.loader.load(testbed_path)
-    my_test = aetest.main(testbed=testbed)
-
-    #these collect the info for variable
-    log_contents = pyats_output_logger.getvalue()
-    pyats_output_logger.close()
-    print("logger variable:\n\n")
-    print(log_contents) 
+    ping_test = aetest.main(
+                            testbed=testbed,
+                            destinations=destinations,
+                            test_results=summary_test_results
+                        )
+    return (ping_test, summary_test_results)
 
 if __name__ == "__main__":
-    testbed = "testbed.yaml"
-    make_ping_test(testbed)
-
-
+    my_testbed = "testbed.yaml"
+    my_destinations = ('208.67.222.222', '173.30.1.1')
+    my_ping_test = make_ping_test(my_testbed, my_destinations)
+    print(my_ping_test)
