@@ -23,7 +23,7 @@ or implied.
 import os
 import pathlib
 
-from configuration.deploy_route_change import edit_routes, create_config
+from configuration_change.deploy_route_change import edit_routes, create_config
 from change_verification.ping_test import make_ping_test
 from notifications.webex_functions import post_message
 
