@@ -60,9 +60,9 @@ def create_config(template, values):
 if __name__ == "__main__":
 
     # DEVICE DETAIL
-    DEVICE_IP = os.getenv("DEVICE_IP", input("Router IP? "))
-    DEVICE_USER = os.getenv("DEVICE_USERNAME", input("Username? "))
-    DEVICE_PASSWORD = os.getenv("DEVICE_PASSWORD", input("Password? "))
+    DEVICE_IP = os.getenv("DEVICE_IP")
+    DEVICE_USER = os.getenv("DEVICE_USERNAME")
+    DEVICE_PASSWORD = os.getenv("DEVICE_PASSWORD")
 
     # CONFIGURATION
     interface_config = create_config("template.j2", "static_routes.yaml")

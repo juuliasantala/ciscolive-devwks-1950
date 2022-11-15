@@ -60,8 +60,8 @@ def get_routes(ip, username, password):
 if __name__ == "__main__":
 
     # DEVICE DETAIL
-    DEVICE_IP = os.getenv("DEVICE_IP", input("Router IP? "))
-    DEVICE_USER = os.getenv("DEVICE_USERNAME", input("Username? "))
-    DEVICE_PASSWORD = os.getenv("DEVICE_PASSWORD", input("Password? "))
+    DEVICE_IP = os.getenv("DEVICE_IP")
+    DEVICE_USER = os.getenv("DEVICE_USERNAME")
+    DEVICE_PASSWORD = os.getenv("DEVICE_PASSWORD")
 
     get_routes(DEVICE_IP, DEVICE_USER, DEVICE_PASSWORD)

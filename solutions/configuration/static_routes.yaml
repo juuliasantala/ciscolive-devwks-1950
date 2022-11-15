@@ -16,3 +16,15 @@ routes:
     fwd_list:
       - fwd: GigabitEthernet3
         metric: 30
+
+  - prefix: 172.30.1.1
+    mask: 255.255.255.255
+    fwd_list:
+      - fwd: 64.102.247.254
+        metric: 1
+
+  - prefix: 0.0.0.0
+    mask: 0.0.0.0
+    fwd_list:
+      - fwd: 64.102.247.129
+        metric: 1
