@@ -78,6 +78,15 @@ def make_ping_test(testbed_path:str, destinations:tuple)->tuple:
     The summary of results can be collected to the test_results dictionary because a Dictionary is
     a mutable Python structure. This means that the changes done to it in the tests are saved into
     the same dictionary that has been initialized in the make_ping_test function.
+
+    As in the final step of the workshop this function will be called from another module (main.py),
+    it is required to define the actual target of the aetest with the argument "testable". When
+    calling the make_ping_test from another Python module, the value of __name__ will be the name
+    of this module: ping_test. This way aetest will know that from wherever we run the script,
+    the test details are located in the module called ping_test.
+    This is an optional argument and you would not need it if running directly this file with
+        python ping_test.py
+    as the default value of the testable is "__main__".
     '''
     summary_test_results = {}
     testbed = topology.loader.load(testbed_path)
