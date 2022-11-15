@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Sample code that takes snapshot, configures devices, takes a second snapshot
-and sends the Diff of these snapshots to Webex space.
+Sample code that makes an initial pre-test, configures devices, makes post-test
+to verify that thetest passes after the change, and sends the test result to
+Webex space.
 
 Copyright (c) 2022 Cisco and/or its affiliates.
 This software is licensed to you under the terms of the Cisco Sample
@@ -20,38 +21,45 @@ or implied.
 """
 
 import os
+import pathlib
 
-from configuration.dynamic_deploy import edit_interfaces, create_config
-from change_verification.verify import get_snapshot, find_difference
+from configuration.deploy_route_change import edit_routes, create_config
+from change_verification.ping_test import make_ping_test
 from notifications.webex_functions import post_message
 
 __copyright__ = "Copyright (c) 2022 Cisco and/or its affiliates."
 __license__ = "Cisco Sample Code License, Version 1.1"
 
-CSR_IP = os.getenv("CSR_IP")
-CSR_USER = os.getenv("CSR_USERNAME")
-CSR_PASSWORD = os.getenv("CSR_PASSWORD")
+# SETUP: DEFINING GLOBAL VARIABLES:
+DEVICE_IP = os.getenv("DEVICE_IP")
+DEVICE_USER = os.getenv("DEVICE_USERNAME")
+DEVICE_PASSWORD = os.getenv("DEVICE_PASSWORD")
 
-TESTBED = "./change_verification/testbed.yaml"
-INTERFACE_TEMPLATE = "./configuration/template.j2"
-INTERFACE_VALUES = "./configuration/interfaces.yaml"
+ROUTE_TEMPLATE = (pathlib.Path(__file__).parent).joinpath('configuration', 'template.j2')
+ROUTE_VALUES = (pathlib.Path(__file__).parent).joinpath('configuration', 'static_routes.yaml')
 
+TESTBED = (pathlib.Path(__file__).parent).joinpath('change_verification', 'testbed.yaml')
+PING_DESTINATIONS = ('208.67.222.222', '172.30.1.1')
+
+# THE FLOW IS EXECUTED WHEN THIS main.py SCRIPT IS RUN:
 if __name__ == "__main__":
-
-    # 1. TAKE PRE-SNAPSHOT
-    pre_snapshot = get_snapshot(TESTBED, "csr1000v-1", "interface")
+    # 1. MAKE A TEST BEFORE APPLYING THE CHANGE
+    pre_test = make_ping_test(TESTBED, PING_DESTINATIONS)
 
     # 2. MAKE CONFIG CHANGE
+    configuration = create_config(ROUTE_TEMPLATE, ROUTE_VALUES)
+    edit_routes(DEVICE_IP, DEVICE_USER, DEVICE_PASSWORD, configuration)
 
-    configuration = create_config(INTERFACE_TEMPLATE, INTERFACE_VALUES)
-    edit_interfaces(CSR_IP, CSR_USER, CSR_PASSWORD, configuration)
+    # 3 MAKE A TEST AFTER APPLYING THE CHANGE
+    post_test = make_ping_test(TESTBED, PING_DESTINATIONS)
 
-    # 3. TAKE POST-SNAPSHOT
-    post_snapshot = get_snapshot(TESTBED, "csr1000v-1", "interface")
+    # 4. SEND TO WEBEX with a nice, clear message
+    message = f"""
+Ping test **before** configuration change: **{pre_test[0]}**
+**Details:** {pre_test[1]}
 
-    # 4. FIND DIFF
-    difference = find_difference(pre_snapshot, post_snapshot)
+Ping test **after** configuration change: **{post_test[0]}**
+**Details:** {post_test[1]}
+    """
 
-    # 5. SEND TO WEBEX
-    message = f"Network configuration changed:\n{difference}"
     post_message(message)
