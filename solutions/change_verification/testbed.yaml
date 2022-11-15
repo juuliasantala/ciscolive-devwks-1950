@@ -4,16 +4,17 @@ testbed:
   name: Saturday Night and the Networks Alright
 
 devices:
-  csr1000v-1:
+  RTR-CiscoLive:
     connections:
       cli:
-        ip: "%ENV{CSR_IP}"
+        ip: "%ENV{DEVICE_IP}"
         protocol: ssh
+        port: 8000
     credentials:
       default:
-        password: "%ENV{CSR_PASSWORD}"
-        username: "%ENV{CSR_USERNAME}"
+        password: "%ENV{DEVICE_PASSWORD}"
+        username: "%ENV{DEVICE_USERNAME}"
       enable:
-        password: "%ENV{CSR_PASSWORD}"
+        password: "%ENV{DEVICE_PASSWORD}"
     os: iosxe
     type: iosxe

@@ -33,11 +33,13 @@ def post_message(message, token=os.getenv("WEBEX_TOKEN"), roomid=os.getenv("WEBE
     headers = {"authorization":f"Bearer {token}", "Content-Type":"application/json"}
     payload = {
         "roomId":roomid,
-        "text":message
+        "markdown":message
     }
     response = requests.post(url, headers=headers, json=payload)
     print(f"Status code of sending the Webex message: {response.status_code}")
-
+    if str(response.status_code)[0] != "2":
+        print("Error:")
+        print(response.text)
 
 if __name__ == "__main__":
     post_message("Hello Cisco Live :)")

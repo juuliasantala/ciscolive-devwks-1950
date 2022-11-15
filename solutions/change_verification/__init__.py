@@ -1,1 +1,1 @@
-from . import verify
+from . import ping_test

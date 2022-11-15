@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Python sample script for changing interface configuration with RESTCONF.
+Python sample script for retrieving infomration on the static route
+configuration with RESTCONF.
 
 Copyright (c) 2022 Cisco and/or its affiliates.
 This software is licensed to you under the terms of the Cisco Sample
@@ -19,6 +20,7 @@ or implied.
 """
 
 import os
+from pprint import pprint
 import requests
 import urllib3
 
@@ -27,10 +29,10 @@ __license__ = "Cisco Sample Code License, Version 1.1"
 
 urllib3.disable_warnings()
 
-def get_interfaces(ip, username, password):
+def get_routes(ip, username, password):
     '''Get interfaces using RESTCONF'''
 
-    url = f"https://{ip}:443/restconf/data/ietf-interfaces:interfaces"
+    url = f"https://{ip}:443/restconf/data/Cisco-IOS-XE-native:native/ip/route"
     headers = {
         'Content-Type': 'application/yang-data+json',
         'Accept': 'application/yang-data+json',
@@ -38,18 +40,15 @@ def get_interfaces(ip, username, password):
     auth = (username, password)
 
     response = requests.get(url, headers=headers, auth=auth, verify=False)
-    print(f"Printing out the interfaces on device {ip}:\n")
-    for interface in response.json()["ietf-interfaces:interfaces"]["interface"]:
-        print(f"- {interface['name']}(Enabled: {interface['enabled']})")
-        print(f"  {interface['description']}")
-        if "address" in interface["ietf-ip:ipv4"]:
-            print(f"  IP address: {interface['ietf-ip:ipv4']['address'][0]['ip']}")
+    print(f"\nThe response body for static routes on device {ip}:\n")
+    pprint(response.json())
+
 
 if __name__ == "__main__":
 
     # DEVICE DETAIL
-    CSR_IP = os.getenv("CSR_IP")
-    CSR_USER = os.getenv("CSR_USERNAME")
-    CSR_PASSWORD = os.getenv("CSR_PASSWORD")
+    DEVICE_IP = os.getenv("DEVICE_IP")
+    DEVICE_USER = os.getenv("DEVICE_USERNAME")
+    DEVICE_PASSWORD = os.getenv("DEVICE_PASSWORD")
 
-    get_interfaces(CSR_IP, CSR_USER, CSR_PASSWORD)
+    get_routes(DEVICE_IP, DEVICE_USER, DEVICE_PASSWORD)

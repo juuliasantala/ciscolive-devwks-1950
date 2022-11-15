@@ -1,0 +1,20 @@
+{
+    "Cisco-IOS-XE-native:route": {
+        "ip-route-interface-forwarding-list": [
+            {% for route in routes %}
+            {
+                "prefix": "{{ route.prefix }}",
+                "mask": "{{ route.mask }}",
+                "fwd-list": [
+                {% for fwd in route.fwd_list %}
+                    {
+                        "fwd": "{{ fwd.fwd }}",
+                        "metric": {{ fwd.metric }}
+                    }{{ "," if not loop.last else "" }}
+                {% endfor %}
+                ]
+            }{{ "," if not loop.last else "" }}
+            {% endfor %}
+        ]
+    }
+}

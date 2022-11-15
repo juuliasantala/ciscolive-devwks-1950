@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Python sample script for changing interface configuration with RESTCONF.
+Python sample script for changing static route configuration with RESTCONF.
 
 Copyright (c) 2022 Cisco and/or its affiliates.
 This software is licensed to you under the terms of the Cisco Sample
@@ -29,10 +29,10 @@ __license__ = "Cisco Sample Code License, Version 1.1"
 
 urllib3.disable_warnings()
 
-def edit_interfaces(ip, username, password, config):
-    '''Edit interfaces based on a configuration file.'''
+def edit_routes(ip, username, password, config):
+    '''Edit routing configuration based on a configuration file.'''
 
-    url = f"https://{ip}:443/restconf/data/ietf-interfaces:interfaces"
+    url = f"https://{ip}:443/restconf/data/Cisco-IOS-XE-native:native/ip/route"
     headers = {
         'Content-Type': 'application/yang-data+json',
         'Accept': 'application/yang-data+json',
@@ -41,26 +41,29 @@ def edit_interfaces(ip, username, password, config):
 
     response = requests.put(url, headers=headers, auth=auth, data=config, verify=False)
     print(f"Status code of deploying the configuration change: {response.status_code}")
+    if str(response.status_code)[0] != "2":
+        print("Error:")
+        print(response.text)
 
 def create_config(template, values):
     '''Create a configuration from Jinja2 template and values from YAML file.'''
 
-    with open(values) as v:
-        config = yaml.safe_load(v.read())
-    with open(template) as t:
-        template = jinja2.Template(t.read())
+    with open(values, encoding="utf-8") as my_values:
+        config = yaml.safe_load(my_values.read())
+    with open(template, encoding="utf-8") as my_template:
+        template = jinja2.Template(my_template.read())
 
-    configuration = template.render(interfaces=config["interfaces"])
+    configuration = template.render(routes=config["routes"])
     print(f"Configuration to be sent: \n {configuration}")
     return configuration
 
 if __name__ == "__main__":
 
     # DEVICE DETAIL
-    CSR_IP = os.getenv("CSR_IP")
-    CSR_USER = os.getenv("CSR_USERNAME")
-    CSR_PASSWORD = os.getenv("CSR_PASSWORD")
+    DEVICE_IP = os.getenv("DEVICE_IP")
+    DEVICE_USER = os.getenv("DEVICE_USERNAME")
+    DEVICE_PASSWORD = os.getenv("DEVICE_PASSWORD")
 
     # CONFIGURATION
-    interface_config = create_config("template.j2", "interfaces.yaml")
-    edit_interfaces(CSR_IP, CSR_USER, CSR_PASSWORD, interface_config)
+    interface_config = create_config("template.j2", "static_routes.yaml")
+    edit_routes(DEVICE_IP, DEVICE_USER, DEVICE_PASSWORD, interface_config)
