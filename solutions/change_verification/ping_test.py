@@ -79,10 +79,10 @@ def make_ping_test(testbed_path:str, destinations:tuple)->tuple:
     a mutable Python structure. This means that the changes done to it in the tests are saved into
     the same dictionary that has been initialized in the make_ping_test function.
     '''
-
     summary_test_results = {}
     testbed = topology.loader.load(testbed_path)
     ping_test = aetest.main(
+                            testable=__name__,
                             testbed=testbed,
                             destinations=destinations,
                             test_results=summary_test_results
