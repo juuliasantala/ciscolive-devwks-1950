@@ -20,9 +20,9 @@ or implied.
 """
 
 import os
+from pprint import pprint
 import requests
 import urllib3
-from prettytable import PrettyTable
 
 __copyright__ = "Copyright (c) 2022 Cisco and/or its affiliates."
 __license__ = "Cisco Sample Code License, Version 1.1"
@@ -40,21 +40,8 @@ def get_routes(ip, username, password):
     auth = (username, password)
 
     response = requests.get(url, headers=headers, auth=auth, verify=False)
-    print(f"\nThe static routes on device {ip}:")
-    
-    table = PrettyTable()
-    table.field_names = ["Prefix", "Mask", "Fwd", "Distance metric"]
-    for destination in response.json()["Cisco-IOS-XE-native:route"]["ip-route-interface-forwarding-list"]:
-        fwd_list = []
-        fwd_metric = []
-        for fwd in destination['fwd-list']:
-            fwd_list.append(fwd['fwd'])
-            fwd_metric.append(str(fwd['metric']) if 'metric' in fwd else 'NA')
-
-        table.add_row(
-            [destination['prefix'], destination['mask'], "\n".join(fwd_list), "\n".join(fwd_metric)]
-        )
-    print(table)
+    print(f"\nThe response body for static routes on device {ip}:\n")
+    pprint(response.json())
 
 
 if __name__ == "__main__":

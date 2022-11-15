@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Python sample script for changing interface configuration with RESTCONF.
+Python sample script for changing static route configuration with RESTCONF.
 
 Copyright (c) 2022 Cisco and/or its affiliates.
 This software is licensed to you under the terms of the Cisco Sample
@@ -48,10 +48,10 @@ def edit_routes(ip, username, password, config):
 def create_config(template, values):
     '''Create a configuration from Jinja2 template and values from YAML file.'''
 
-    with open(values) as v:
-        config = yaml.safe_load(v.read())
-    with open(template) as t:
-        template = jinja2.Template(t.read())
+    with open(values, encoding="utf-8") as my_values:
+        config = yaml.safe_load(my_values.read())
+    with open(template, encoding="utf-8") as my_template:
+        template = jinja2.Template(my_template.read())
 
     configuration = template.render(routes=config["routes"])
     print(f"Configuration to be sent: \n {configuration}")
