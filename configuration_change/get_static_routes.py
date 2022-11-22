@@ -23,7 +23,7 @@ def get_routes(ip, username, password):
     print(f"\nThe response body for static routes on device {ip}:\n")
     # pprint(response.json()) 
     response = response.json()
-    formatted = json.dumps(response, indent=2)
+    formatted = json.dumps(response, indent=4)
     print(formatted)
 
 if __name__ == "__main__":
