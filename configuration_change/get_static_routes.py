@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import os
-from pprint import pprint
+import json
+# from pprint import pprint
 import requests
 import urllib3
 
@@ -20,7 +21,10 @@ def get_routes(ip, username, password):
 
     response = requests.get(url, headers=headers, auth=auth, verify=False)
     print(f"\nThe response body for static routes on device {ip}:\n")
-    pprint(response.json()) 
+    # pprint(response.json()) 
+    response = response.json()
+    formatted = json.dumps(response, indent=2)
+    print(formatted)
 
 if __name__ == "__main__":
 
