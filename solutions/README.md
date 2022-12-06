@@ -1,5 +1,7 @@
 # Saturday Night and the Network's alright 
 
+**NOTE! The instructions have not yet been updated for the CL APJC version of the workshop. CL APJC is not using the reservable CSR sandbox. Please stand by for the updated instructions.**
+
 Solution files for Cisco Live 2022 DevNet workshop
 
 ## Requirements
