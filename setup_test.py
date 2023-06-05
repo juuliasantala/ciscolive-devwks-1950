@@ -7,8 +7,9 @@ Setup function for DevNet workshop to be used in Cisco Live events.
 import os
 import textwrap
 import requests
+import urllib3
 
-# POD_IP = "64.102.247.2{pod}"
+urllib3.disable_warnings()
 
 def setup_test():
     '''
@@ -16,6 +17,8 @@ def setup_test():
     '''
     pod_number = os.getenv("POD_NUMBER")
     device_ip = os.getenv("DEVICE_IP")
+    username = os.getenv("DEVICE_USERNAME")
+    password = os.getenv("DEVICE_PASSWORD")
     webex_room = os.getenv('WEBEX_ROOM')
     webex_token = os.getenv('WEBEX_TOKEN')
 
@@ -27,16 +30,31 @@ def setup_test():
                                 )
 
     print(f"\n{'*'*40}\n")
-    print("Executing connecivity tests to verify the setup was completed successfully.\n")
+    print("Executing connectivity tests to verify the setup was completed successfully.\n")
 
     print(f"TEST 1. Checking the connectivity to the router of pod {pod_number}:")
-    response = os.popen(f"ping {device_ip} -c 3").read()
-    for line in response.split("\n"):
-        print(wrapper.fill(line))
-    if "100.0% packet loss" in response:
+    # response = os.popen(f"ping {device_ip} -c 3").read()
+    # for line in response.split("\n"):
+    #     print(wrapper.fill(line))
+    # if "100.0% packet loss" in response:
+    #     errors.append(
+    #         f"Error in pinging pod {pod_number} ({device_ip}), 100% packet loss"
+    #         )
+
+    url = f"https://{device_ip}:443/restconf/data/Cisco-IOS-XE-native:native/ip/route"
+    headers = {'Content-Type': 'application/yang-data+json'}
+    auth = (username, password)
+
+    response = requests.get(url, headers=headers, auth=auth, verify=False)
+    if str(response.status_code)[0] == "2":
+        print(wrapper.fill("SUCCESS!"))
+    else:
+        print(wrapper.fill("ERROR in reaching pod router with RESTCONF:"))
+        print(wrapper.fill(response.text))
         errors.append(
-            f"Error in pinging pod {pod_number} ({device_ip}), 100% packet loss"
+            f"Error in reaching pod router with RESTCONF:\n{response.json()['message']}"
             )
+
 
     print("\nTEST 2. Checking connectivity to Webex space:")
 
