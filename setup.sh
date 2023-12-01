@@ -2,13 +2,21 @@
 
 . ./env
 
+pods=("64.102.247.200" "64.102.247.223" "64.102.247.202" "64.102.247.203" "64.102.247.194" "64.102.247.195" "64.102.247.206" "64.102.247.207"
+    "64.102.247.208" "64.102.247.209" "64.102.247.210" "64.102.247.211" "64.102.247.212" "64.102.247.213" "64.102.247.214" "64.102.247.215"
+    "64.102.247.216" "64.102.247.217" "64.102.247.197" "64.102.247.199" "64.102.247.220")
+
 echo "GET READY FOR YOUR CISCO LIVE WORKSHOP EXPERIENCE :)"
 echo -n "What is your pod number? "
 read POD_NUMBER
 
 POD_NUMBER=$(echo ${POD_NUMBER} | sed 's/^0*//')
 
-export POD_NUMBER=$(printf "%02d" "${POD_NUMBER}")
-export DEVICE_IP="64.102.247.2${POD_NUMBER}"
+# export POD_NUMBER=$(printf "%02d" "${POD_NUMBER}")
+export POD_NUMBER=$POD_NUMBER
+export DEVICE_IP=${pods[$POD_NUMBER]}
+
+# echo $POD_NUMBER
+# echo $DEVICE_IP
 
 python ./setup_test.py

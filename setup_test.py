@@ -32,7 +32,7 @@ def setup_test():
     print(f"\n{'*'*40}\n")
     print("Executing connectivity tests to verify the setup was completed successfully.\n")
 
-    print(f"TEST 1. Checking the connectivity to the router of pod {pod_number}:")
+    print(f"TEST 1. Checking RESTCONF connectivity to the router of pod {pod_number} ({device_ip}):")
     # response = os.popen(f"ping {device_ip} -c 3").read()
     # for line in response.split("\n"):
     #     print(wrapper.fill(line))
